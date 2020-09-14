@@ -4,11 +4,16 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 
 import 'package:jaga_jindan/edu_list.dart';
+import 'package:jaga_jindan/send_survey.dart';
 
 class School {
   String name, address, code;
 
   School(this.name, this.address, this.code);
+  @override
+  String toString() {
+    return "${name}<${address}>($code)";
+  }
 }
 
 /*
@@ -30,6 +35,8 @@ Future<List<School>> getSchoolList(
           }),
           headers: {'Content-Type': 'application/json'}))
       .body);
+
+  if (res["sizeover"]) toast("검색 결과가 많습니다.\n학교 이름을 정확히 입력해주세요.");
 
   List<School> ret = [];
   for (var i in res["schulList"]) {

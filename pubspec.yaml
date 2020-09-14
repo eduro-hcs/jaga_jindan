@@ -31,6 +31,7 @@ dependencies:
   path_provider: ^1.6.14
   fluttertoast: ^7.1.1
   http: ^0.12.2
+  encrypt: ^4.0.2
 
 dev_dependencies:
   flutter_test:
