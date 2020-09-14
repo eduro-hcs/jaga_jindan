@@ -48,7 +48,14 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  JagaJindanData data = JagaJindanData("", "", "", "", false, false, false);
+  JagaJindanData data = JagaJindanData(
+      "",
+      "",
+      "",
+      "",
+      false,
+      false,
+      false);
   TextEditingController nameController = TextEditingController(),
       birthdayController = TextEditingController(),
       schoolController = TextEditingController(),
@@ -68,7 +75,11 @@ class MainPage extends StatefulWidget {
 
     if (this.data.startup) sendSurvey(this.data);
 
-    _state.setState(() {});
+
+    await _state.agree();
+    await _state.setState(() {});
+
+    //_state = _MainPageState();
   }
 
   writeJSON() async {
@@ -76,18 +87,72 @@ class MainPage extends StatefulWidget {
   }
 
   @override
-  _MainPageState createState() => _state = _MainPageState();
+  _MainPageState createState() =>_MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
   final _formKey = GlobalKey<FormState>();
-  String _edu = "서울특별시", _school = "1", _select_school_code = "";
+  String _edu = "서울특별시",
+      _school = "1",
+      _select_school_code = "";
   List<School> _schools = [];
 
   TextEditingController searchSchoolController;
 
+  Future<void> agree() async {
+    if (!this.widget.data.agree) {
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('알림'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('이 앱을 사용함으로써 발생하는 모든 민,형사상 책임은 앱 사용자에게 있습니다.'),
+                  Text(
+                      '코로나19 의심 증상이 있으면 즉시 공식 홈페이지에서 설문 재제출을 하시기 바랍니다.'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              /*
+                    CheckboxListTile(
+                      title: const Text('창 띄우지 않기'),
+                      value: timeDilation != 1.0,
+                      onChanged: (bool value) {
+                        setState(() {
+                          timeDilation = value ? 2.0 : 1.0;
+                        });
+                      },
+                    ),*/
+              FlatButton(
+                child: Text('동의'),
+                onPressed: () {
+                  this.widget.data.agree = true;
+                  this.widget.writeJSON();
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('앱 종료'),
+                onPressed: () {
+                  exit(0);
+                },
+              ),
+            ],
+          );
+        },
+      ).then((value) {
+        if (!this.widget.data.agree) exit(0);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    this.widget._state = this;
     searchSchoolController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
@@ -104,7 +169,8 @@ class _MainPageState extends State<MainPage> {
                     Text("인증 정보 입력",
                         style: TextStyle(
                             color: Colors.black,
-                            fontSize: Theme.of(context)
+                            fontSize: Theme
+                                .of(context)
                                 .textTheme
                                 .headline4
                                 .fontSize)),
@@ -162,171 +228,178 @@ class _MainPageState extends State<MainPage> {
                               builder: (BuildContext context) {
                                 return StatefulBuilder(
                                     builder: (context, StateSetter _setState) {
-                                  return AlertDialog(
-                                    title: Text('학교 검색'),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(
-                                        children: <Widget>[
-                                          DropdownButton<String>(
-                                            icon:
+                                      return AlertDialog(
+                                        title: Text('학교 검색'),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(
+                                            children: <Widget>[
+                                              DropdownButton<String>(
+                                                icon:
                                                 Icon(Icons.keyboard_arrow_down),
-                                            items: EDU_LIST.entries
-                                                .map<DropdownMenuItem<String>>(
-                                                    (e) => DropdownMenuItem(
-                                                        child: Text(e.key),
-                                                        value: e.key))
-                                                .toList(),
-                                            onChanged: (String value) {
-                                              _setState(() {
-                                                _edu = value;
-                                              });
-                                            },
-                                            value: _edu,
-                                            iconSize: 24,
-                                            elevation: 16,
-                                            //style: TextStyle(color: Colors.deepOrange),
-                                            underline: Container(
-                                              height: 2,
-                                              //color: Colors.deepOrange,
-                                            ),
-                                          ),
-                                          DropdownButton<String>(
-                                            icon:
+                                                items: EDU_LIST.entries
+                                                    .map<
+                                                    DropdownMenuItem<String>>(
+                                                        (e) =>
+                                                        DropdownMenuItem(
+                                                            child: Text(e.key),
+                                                            value: e.key))
+                                                    .toList(),
+                                                onChanged: (String value) {
+                                                  _setState(() {
+                                                    _edu = value;
+                                                  });
+                                                },
+                                                value: _edu,
+                                                iconSize: 24,
+                                                elevation: 16,
+                                                //style: TextStyle(color: Colors.deepOrange),
+                                                underline: Container(
+                                                  height: 2,
+                                                  //color: Colors.deepOrange,
+                                                ),
+                                              ),
+                                              DropdownButton<String>(
+                                                icon:
                                                 Icon(Icons.keyboard_arrow_down),
-                                            items: {
-                                              '1': '유치원',
-                                              '2': '초등학교',
-                                              '3': '중학교',
-                                              '4': '고등학교',
-                                              '5': '특수학교'
-                                            }
-                                                .entries
-                                                .map<DropdownMenuItem<String>>(
-                                                    (e) => DropdownMenuItem(
+                                                items: {
+                                                  '1': '유치원',
+                                                  '2': '초등학교',
+                                                  '3': '중학교',
+                                                  '4': '고등학교',
+                                                  '5': '특수학교'
+                                                }
+                                                    .entries
+                                                    .map<
+                                                    DropdownMenuItem<String>>(
+                                                        (e) =>
+                                                        DropdownMenuItem(
                                                           child: Text(e.value),
                                                           value: e.key,
                                                         ))
-                                                .toList(),
-                                            onChanged: (String value) {
-                                              _setState(() {
-                                                _school = value;
-                                              });
-                                            },
-                                            value: _school,
-                                            iconSize: 24,
-                                            elevation: 16,
-                                            //style: TextStyle(color: Colors.deepOrange),
-                                            underline: Container(
-                                              height: 2,
-                                              //color: Colors.deepOrange,
-                                            ),
-                                          ),
-                                          Row(children: <Widget>[
-                                            new Flexible(
-                                                child: TextFormField(
-                                              decoration: const InputDecoration(
-                                                  hintText: "학교 명을 입력하세요."),
-                                              controller:
-                                                  searchSchoolController,
-                                            )),
-                                            FlatButton(
-                                              onPressed: () async {
-                                                var tmp = await getSchoolList(
-                                                    searchSchoolController.text,
-                                                    _edu,
-                                                    _school);
-                                                //for (var s in tmp) toast(s.code);
-                                                //tmp = [];
-                                                _setState(() {
-                                                  _schools = tmp;
-                                                  if (tmp.isEmpty) {
-                                                    _select_school_code = "";
-                                                    toast("검색 결과가 없습니다.");
-                                                  } else
-                                                    _select_school_code =
-                                                        tmp[0].code;
-                                                });
-                                              },
-                                              child: Icon(Icons.search),
-                                              minWidth: 0,
-                                              height: 0,
-                                              materialTapTargetSize:
+                                                    .toList(),
+                                                onChanged: (String value) {
+                                                  _setState(() {
+                                                    _school = value;
+                                                  });
+                                                },
+                                                value: _school,
+                                                iconSize: 24,
+                                                elevation: 16,
+                                                //style: TextStyle(color: Colors.deepOrange),
+                                                underline: Container(
+                                                  height: 2,
+                                                  //color: Colors.deepOrange,
+                                                ),
+                                              ),
+                                              Row(children: <Widget>[
+                                                new Flexible(
+                                                    child: TextFormField(
+                                                      decoration: const InputDecoration(
+                                                          hintText: "학교 명을 입력하세요."),
+                                                      controller:
+                                                      searchSchoolController,
+                                                    )),
+                                                FlatButton(
+                                                  onPressed: () async {
+                                                    var tmp = await getSchoolList(
+                                                        searchSchoolController
+                                                            .text,
+                                                        _edu,
+                                                        _school);
+                                                    //for (var s in tmp) toast(s.code);
+                                                    //tmp = [];
+                                                    _setState(() {
+                                                      _schools = tmp;
+                                                      if (tmp.isEmpty) {
+                                                        _select_school_code =
+                                                        "";
+                                                        toast("검색 결과가 없습니다.");
+                                                      } else
+                                                        _select_school_code =
+                                                            tmp[0].code;
+                                                    });
+                                                  },
+                                                  child: Icon(Icons.search),
+                                                  minWidth: 0,
+                                                  height: 0,
+                                                  materialTapTargetSize:
                                                   MaterialTapTargetSize
                                                       .shrinkWrap,
-                                              padding: EdgeInsets.all(3),
-                                            )
-                                          ]),
-                                          Divider(
-                                            color: Colors.black38,
-                                            height: 50,
-                                            thickness: 1,
-                                            indent: 0,
-                                            endIndent: 0,
-                                          ),
-                                          //Text("검색 결과")
-                                          DropdownButton<String>(
-                                            icon:
+                                                  padding: EdgeInsets.all(3),
+                                                )
+                                              ]),
+                                              Divider(
+                                                color: Colors.black38,
+                                                height: 50,
+                                                thickness: 1,
+                                                indent: 0,
+                                                endIndent: 0,
+                                              ),
+                                              //Text("검색 결과")
+                                              DropdownButton<String>(
+                                                icon:
                                                 Icon(Icons.keyboard_arrow_down),
-                                            items: _schools
-                                                .map<DropdownMenuItem<String>>(
-                                                    (school) =>
+                                                items: _schools
+                                                    .map<
+                                                    DropdownMenuItem<String>>(
+                                                        (school) =>
                                                         DropdownMenuItem(
                                                           child:
-                                                              Text(school.name),
+                                                          Text(school.name),
                                                           value: school.code,
                                                         ))
-                                                .toList(),
-                                            onChanged: (String value) {
-                                              setState(() {
-                                                _select_school_code = value;
+                                                    .toList(),
+                                                onChanged: (String value) {
+                                                  setState(() {
+                                                    _select_school_code = value;
+                                                  });
+                                                },
+                                                value: _select_school_code,
+                                                iconSize: 24,
+                                                elevation: 16,
+                                                //style: TextStyle(color: Colors.deepOrange),
+                                                underline: Container(
+                                                  height: 2,
+                                                  //color: Colors.deepOrange,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('선택'),
+                                            onPressed: () {
+                                              if (_select_school_code.isEmpty) {
+                                                toast("학교를 선택해주세요.");
+                                                return;
+                                              }
+                                              widget.data.school =
+                                                  _select_school_code;
+                                              widget.writeJSON();
+                                              _setState(() {
+                                                widget.schoolController.text =
+                                                    _select_school_code;
                                               });
+                                              Navigator.of(context).pop();
                                             },
-                                            value: _select_school_code,
-                                            iconSize: 24,
-                                            elevation: 16,
-                                            //style: TextStyle(color: Colors.deepOrange),
-                                            underline: Container(
-                                              height: 2,
-                                              //color: Colors.deepOrange,
-                                            ),
+                                          ),
+                                          FlatButton(
+                                            child: Text('닫기'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('선택'),
-                                        onPressed: () {
-                                          if (_select_school_code.isEmpty) {
-                                            toast("학교를 선택해주세요.");
-                                            return;
-                                          }
-                                          widget.data.school =
-                                              _select_school_code;
-                                          widget.writeJSON();
-                                          _setState(() {
-                                            widget.schoolController.text =
-                                                _select_school_code;
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      FlatButton(
-                                        child: Text('닫기'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
+                                      );
+                                    });
                               },
                             );
                           },
                           minWidth: 0,
                           height: 0,
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           padding: EdgeInsets.all(3),
                         ),
                       ],
@@ -336,7 +409,7 @@ class _MainPageState extends State<MainPage> {
                       child: TextFormField(
                         keyboardType: TextInputType.number,
                         decoration:
-                            const InputDecoration(hintText: "비밀번호를 입력하세요."),
+                        const InputDecoration(hintText: "비밀번호를 입력하세요."),
                         obscureText: true,
                         validator: (value) {
                           if (value.length != 4) {
@@ -380,7 +453,7 @@ class _MainPageState extends State<MainPage> {
                                         Navigator.of(context).pop();
                                         this.widget.data.password = "";
                                         this.widget.passwordController.text =
-                                            "";
+                                        "";
 
                                         setState(() {
                                           this.widget.data.force = true;
@@ -463,55 +536,7 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState.validate()) {
-            if (!this.widget.data.agree) {
-              showDialog<void>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('알림'),
-                    content: SingleChildScrollView(
-                      child: ListBody(
-                        children: <Widget>[
-                          Text('이 앱을 사용함으로써 발생하는 모든 민,형사상 책임은 앱 사용자에게 있습니다.'),
-                          Text(
-                              '코로나19 의심 증상이 있으면 즉시 공식 홈페이지에서 설문 재제출을 하시기 바랍니다.'),
-                        ],
-                      ),
-                    ),
-                    actions: <Widget>[
-                      /*
-                    CheckboxListTile(
-                      title: const Text('창 띄우지 않기'),
-                      value: timeDilation != 1.0,
-                      onChanged: (bool value) {
-                        setState(() {
-                          timeDilation = value ? 2.0 : 1.0;
-                        });
-                      },
-                    ),*/
-                      FlatButton(
-                        child: Text('동의'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          this.widget.data.agree = true;
-                          this.widget.writeJSON();
-
-                          sendSurvey(this.widget.data);
-                        },
-                      ),
-                      FlatButton(
-                        child: Text('앱 종료'),
-                        onPressed: () {
-                          exit(0);
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            } else
-              sendSurvey(this.widget.data);
+            sendSurvey(this.widget.data);
           }
         },
         tooltip: '자가진단 제출',
