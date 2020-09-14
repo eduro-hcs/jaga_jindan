@@ -27,29 +27,22 @@ class JagaJindanData {
         json["name"] ?? "",
         json["birthday"] ?? "",
         json["school"] ?? "",
-        //json["edu"] ?? "",
+        json["edu"] ?? "",
         json["password"] ?? "",
         json["force"] ?? false,
         json["agree"] ?? false,
         json["startup"] ?? false);
   }
 
-  JagaJindanData(
-      this.name,
-      this.birthday,
-      this.school,
-      /*this.edu, */
-      this.password,
-      this.force,
-      this.agree,
-      this.startup);
+  JagaJindanData(this.name, this.birthday, this.school, this.edu, this.password,
+      this.force, this.agree, this.startup);
 
   dynamic toJSON() {
     return {
       "name": this.name,
       "birthday": this.birthday,
       "school": this.school,
-      //"edu": this.edu,
+      "edu": this.edu,
       "password": this.password,
       "force": this.force,
       "agree": this.agree,
@@ -60,8 +53,8 @@ class JagaJindanData {
 
 void sendSurvey(JagaJindanData credentials) async {
   try {
-    String jwt = jsonDecode(
-        (await http.post('https://penhcs.eduro.go.kr/loginwithschool',
+    String jwt =
+        jsonDecode((await http.post('https://${credentials.edu}hcs.eduro.go.kr/loginwithschool',
                 body: jsonEncode({
                   'birthday': encrypt(credentials.birthday),
                   'name': encrypt(credentials.name),
@@ -72,7 +65,7 @@ void sendSurvey(JagaJindanData credentials) async {
             .body)['token'];
 
     if (!credentials.force) {
-      if ((await http.post('https://penhcs.eduro.go.kr/checkpw',
+      if ((await http.post('https://${credentials.edu}hcs.eduro.go.kr/checkpw',
                   body: jsonEncode({}),
                   headers: {
                 'Authorization': jwt,
@@ -84,7 +77,7 @@ void sendSurvey(JagaJindanData credentials) async {
         return;
       }
 
-      if (jsonDecode((await http.post('https://penhcs.eduro.go.kr/secondlogin',
+      if (jsonDecode((await http.post('https://${credentials.edu}hcs.eduro.go.kr/secondlogin',
                   body: jsonEncode({
                     'deviceUuid': '',
                     'password': encrypt(credentials.password)
@@ -101,7 +94,7 @@ void sendSurvey(JagaJindanData credentials) async {
     }
 
     var users = jsonDecode((await http.post(
-            'https://penhcs.eduro.go.kr/selectGroupList',
+            'https://${credentials.edu}hcs.eduro.go.kr/selectGroupList',
             body: jsonEncode({}),
             headers: {
           'Authorization': jwt,
@@ -114,7 +107,7 @@ void sendSurvey(JagaJindanData credentials) async {
     var userNo = int.parse(users['groupList'][0]['userPNo']);
     String org = users['groupList'][0]['orgCode'];
 
-    jwt = jsonDecode((await http.post('https://penhcs.eduro.go.kr/userrefresh',
+    jwt = jsonDecode((await http.post('https://${credentials.edu}hcs.eduro.go.kr/userrefresh',
             body: jsonEncode({'userPNo': userNo, 'orgCode': org}),
             headers: {
           'Authorization': jwt,
@@ -122,7 +115,7 @@ void sendSurvey(JagaJindanData credentials) async {
         }))
         .body)['UserInfo']['token'];
 
-    var res = await http.post('https://penhcs.eduro.go.kr/registerServey',
+    var res = await http.post('https://${credentials.edu}hcs.eduro.go.kr/registerServey',
         body: jsonEncode({
           'rspns01': '1',
           'rspns02': '1',
@@ -147,5 +140,6 @@ void sendSurvey(JagaJindanData credentials) async {
     toast("자가진단 설문이 ${DateTime.now().toString().substring(0, 19)}에 제출되었습니다.");
   } catch (e) {
     toast("인증 정보를 한번 더 확인해주세요.\n오류가 계속 발생하는 경우 개발자에게 알려주세요.");
+    //toast(e.toString());
   }
 }

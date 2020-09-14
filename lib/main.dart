@@ -53,6 +53,7 @@ class MainPage extends StatefulWidget {
       "",
       "",
       "",
+      "",
       false,
       false,
       false);
@@ -78,8 +79,6 @@ class MainPage extends StatefulWidget {
 
     await _state.agree();
     await _state.setState(() {});
-
-    //_state = _MainPageState();
   }
 
   writeJSON() async {
@@ -376,6 +375,7 @@ class _MainPageState extends State<MainPage> {
                                               }
                                               widget.data.school =
                                                   _select_school_code;
+                                              widget.data.edu = URL_LIST[_edu];
                                               widget.writeJSON();
                                               _setState(() {
                                                 widget.schoolController.text =
