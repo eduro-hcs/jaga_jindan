@@ -349,7 +349,7 @@ class _MainPageState extends State<MainPage> {
                                                         ))
                                                     .toList(),
                                                 onChanged: (String value) {
-                                                  setState(() {
+                                                  _setState(() {
                                                     _select_school_code = value;
                                                   });
                                                 },
@@ -377,7 +377,7 @@ class _MainPageState extends State<MainPage> {
                                                   _select_school_code;
                                               widget.data.edu = URL_LIST[_edu];
                                               widget.writeJSON();
-                                              _setState(() {
+                                              setState(() {
                                                 widget.schoolController.text =
                                                     _select_school_code;
                                               });
