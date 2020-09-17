@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: obj,
+      darkTheme: ThemeData.dark(),
     );
   }
 }
@@ -155,7 +156,7 @@ class _MainPageState extends State<MainPage> {
                   children: <Widget>[
                     Text("인증 정보 입력",
                         style: TextStyle(
-                            color: Colors.black,
+                            //color: Colors.black,
                             fontSize: Theme.of(context)
                                 .textTheme
                                 .headline4
