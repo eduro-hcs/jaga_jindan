@@ -48,6 +48,7 @@ class MyApp extends StatelessWidget {
       ),
       home: obj,
       darkTheme: ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -183,6 +184,10 @@ class _MainPageState extends State<MainPage> {
                         controller: this.widget.nameController,
                       ),
                       TextFormField(
+                        onChanged: (text) {
+                          this.widget.data.birthday = text;
+                          this.widget.writeJSON();
+                        },
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                             hintText: "생년월일을 입력하세요. (YYMMDD)"),
@@ -191,10 +196,6 @@ class _MainPageState extends State<MainPage> {
                             return "생년월일을 올바르게 입력하세요.";
                           }
                           return null;
-                        },
-                        onChanged: (text) {
-                          this.widget.data.birthday = text;
-                          this.widget.writeJSON();
                         },
                         controller: this.widget.birthdayController,
                       ),
@@ -571,10 +572,10 @@ class _MainPageState extends State<MainPage> {
                                     CheckboxListTile(
                                         contentPadding: EdgeInsets.zero,
                                         title: const Text('자가진단 결과 알림으로 받기'),
-                                        value: this.widget.data.noti,
+                                        value: this.widget.data.useNotification,
                                         onChanged: (bool value) {
                                           _setState(() {
-                                            this.widget.data.noti = value;
+                                            this.widget.data.useNotification = value;
                                             this.widget.writeJSON();
                                           });
                                         }),
@@ -646,10 +647,10 @@ class _MainPageState extends State<MainPage> {
                               ),
                               actions: <Widget>[
                                 FlatButton(
-                                  child: Text('닫기'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
+                                  child: Text('닫기'),
                                 ),
                               ],
                             );

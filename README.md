@@ -1,4 +1,4 @@
-# jaga_jindan
+# 자가진단
 
 
 <p align="center">
