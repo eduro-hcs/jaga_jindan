@@ -3,7 +3,7 @@ description: 자가진단 자동화 앱
 
 publish_to: 'none'
 
-version: 0.2.4
+version: 0.2.5
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
