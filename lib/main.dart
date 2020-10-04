@@ -23,15 +23,15 @@ _write(dynamic json) async {
 }
 
 Future<dynamic> _read() async {
-  String text;
+  dynamic json;
   try {
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/cred.json');
-    text = await file.readAsString();
+    json = jsonDecode(await file.readAsString());
   } catch (e) {
-    text = "{}";
+    json = {};
   }
-  return jsonDecode(text);
+  return json;
 }
 
 class MyApp extends StatelessWidget {
