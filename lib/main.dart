@@ -55,7 +55,16 @@ class MyApp extends StatelessWidget {
 
 class MainPage extends StatefulWidget {
   JagaJindanData data =
-      JagaJindanData("", "", "", "", "", false, false, false, false);
+  JagaJindanData(
+      "",
+      "",
+      "",
+      "",
+      "",
+      false,
+      false,
+      false,
+      false);
   TextEditingController nameController = TextEditingController(),
       birthdayController = TextEditingController(),
       schoolController = TextEditingController(),
@@ -89,7 +98,9 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final _formKey = GlobalKey<FormState>();
-  String _edu = "서울특별시", _school = "1", _select_school_code = "";
+  String _edu = "서울특별시",
+      _school = "1",
+      _select_school_code = "";
   List<School> _schools = [];
 
   TextEditingController searchSchoolController;
@@ -162,15 +173,16 @@ class _MainPageState extends State<MainPage> {
                     children: <Widget>[
                       Text("인증 정보 입력",
                           style: TextStyle(
-                              //color: Colors.black,
-                              fontSize: Theme.of(context)
+                            //color: Colors.black,
+                              fontSize: Theme
+                                  .of(context)
                                   .textTheme
                                   .headline4
                                   .fontSize)),
                       new Padding(padding: EdgeInsets.only(bottom: 50)),
                       TextFormField(
                         decoration:
-                            const InputDecoration(hintText: "이름을 입력하세요."),
+                        const InputDecoration(hintText: "이름을 입력하세요."),
                         validator: (value) {
                           if (value.isEmpty) {
                             return "이름을 입력하세요.";
@@ -232,11 +244,11 @@ class _MainPageState extends State<MainPage> {
                                                   Icons.keyboard_arrow_down),
                                               items: EDU_LIST.entries
                                                   .map<
-                                                      DropdownMenuItem<
-                                                          String>>((e) =>
-                                                      DropdownMenuItem(
-                                                          child: Text(e.key),
-                                                          value: e.key))
+                                                  DropdownMenuItem<
+                                                      String>>((e) =>
+                                                  DropdownMenuItem(
+                                                      child: Text(e.key),
+                                                      value: e.key))
                                                   .toList(),
                                               onChanged: (String value) {
                                                 _setState(() {
@@ -264,12 +276,12 @@ class _MainPageState extends State<MainPage> {
                                               }
                                                   .entries
                                                   .map<
-                                                      DropdownMenuItem<
-                                                          String>>((e) =>
-                                                      DropdownMenuItem(
-                                                        child: Text(e.value),
-                                                        value: e.key,
-                                                      ))
+                                                  DropdownMenuItem<
+                                                      String>>((e) =>
+                                                  DropdownMenuItem(
+                                                    child: Text(e.value),
+                                                    value: e.key,
+                                                  ))
                                                   .toList(),
                                               onChanged: (String value) {
                                                 _setState(() {
@@ -288,13 +300,13 @@ class _MainPageState extends State<MainPage> {
                                             Row(children: <Widget>[
                                               new Flexible(
                                                   child: TextFormField(
-                                                decoration:
+                                                    decoration:
                                                     const InputDecoration(
                                                         hintText:
-                                                            "학교 명을 입력하세요."),
-                                                controller:
+                                                        "학교 명을 입력하세요."),
+                                                    controller:
                                                     searchSchoolController,
-                                              )),
+                                                  )),
                                               FlatButton(
                                                 onPressed: () async {
                                                   var tmp = await getSchoolList(
@@ -318,8 +330,8 @@ class _MainPageState extends State<MainPage> {
                                                 minWidth: 0,
                                                 height: 0,
                                                 materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
                                                 padding: EdgeInsets.all(3),
                                               )
                                             ]),
@@ -336,13 +348,13 @@ class _MainPageState extends State<MainPage> {
                                                   Icons.keyboard_arrow_down),
                                               items: _schools
                                                   .map<
-                                                      DropdownMenuItem<
-                                                          String>>((school) =>
-                                                      DropdownMenuItem(
-                                                        child:
-                                                            Text(school.name),
-                                                        value: school.code,
-                                                      ))
+                                                  DropdownMenuItem<
+                                                      String>>((school) =>
+                                                  DropdownMenuItem(
+                                                    child:
+                                                    Text(school.name),
+                                                    value: school.code,
+                                                  ))
                                                   .toList(),
                                               onChanged: (String value) {
                                                 _setState(() {
@@ -395,7 +407,7 @@ class _MainPageState extends State<MainPage> {
                             minWidth: 0,
                             height: 0,
                             materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                            MaterialTapTargetSize.shrinkWrap,
                             padding: EdgeInsets.all(3),
                           ),
                         ],
@@ -405,7 +417,7 @@ class _MainPageState extends State<MainPage> {
                         child: TextFormField(
                           keyboardType: TextInputType.number,
                           decoration:
-                              const InputDecoration(hintText: "비밀번호를 입력하세요."),
+                          const InputDecoration(hintText: "비밀번호를 입력하세요."),
                           obscureText: true,
                           validator: (value) {
                             if (value.length != 4) {
@@ -449,7 +461,7 @@ class _MainPageState extends State<MainPage> {
                                           Navigator.of(context).pop();
                                           this.widget.data.password = "";
                                           this.widget.passwordController.text =
-                                              "";
+                                          "";
 
                                           setState(() {
                                             this.widget.data.force = true;
@@ -547,114 +559,122 @@ class _MainPageState extends State<MainPage> {
                         builder: (BuildContext context) {
                           return StatefulBuilder(
                               builder: (context, StateSetter _setState) {
-                            if (!first) {
-                              http
-                                  .get(
+                                if (!first) {
+                                  http
+                                      .get(
                                       "https://api.github.com/repos/eduro-hcs/jaga_jindan/releases/latest")
-                                  .then((data) {
-                                try {
-                                  _setState(() {
-                                    newVer = jsonDecode(data.body)["tag_name"];
-                                    newVer = newVer.substring(1);
+                                      .then((data) {
+                                    try {
+                                      _setState(() {
+                                        newVer =
+                                        jsonDecode(data.body)["tag_name"];
+                                        newVer = newVer.substring(1);
+                                      });
+                                    } catch (e) {
+                                      newVer = "(error)";
+                                    }
                                   });
-                                } catch (e) {
-                                  newVer = "(error)";
+                                  first = true;
                                 }
-                              });
-                              first = true;
-                            }
 
-                            return AlertDialog(
-                              title: Text('설정 및 정보'),
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: <Widget>[
-                                    CheckboxListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: const Text('자가진단 결과 알림으로 받기'),
-                                        value: this.widget.data.useNotification,
-                                        onChanged: (bool value) {
-                                          _setState(() {
-                                            this.widget.data.useNotification = value;
-                                            this.widget.writeJSON();
-                                          });
-                                        }),
-                                    Divider(
-                                      color: Colors.black38,
-                                      height: 50,
-                                      thickness: 1,
-                                      indent: 0,
-                                      endIndent: 0,
+                                return AlertDialog(
+                                  title: Text('설정 및 정보'),
+                                  content: SingleChildScrollView(
+                                    child: ListBody(
+                                      children: <Widget>[
+                                        CheckboxListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: const Text(
+                                                '자가진단 결과 알림으로 받기'),
+                                            value: this.widget.data
+                                                .useNotification,
+                                            onChanged: (bool value) {
+                                              _setState(() {
+                                                this.widget.data
+                                                    .useNotification = value;
+                                                this.widget.writeJSON();
+                                              });
+                                            }),
+                                        Divider(
+                                          color: Colors.black38,
+                                          height: 50,
+                                          thickness: 1,
+                                          indent: 0,
+                                          endIndent: 0,
+                                        ),
+                                        Row(children: [
+                                          Text("개발자: "),
+                                          InkWell(
+                                            child: Text(
+                                              "엔로그 (nnnlog)",
+                                              style: TextStyle(
+                                                  color: Colors.blue,
+                                                  decoration:
+                                                  TextDecoration.underline),
+                                            ),
+                                            onTap: () =>
+                                                launch(
+                                                    "https://github.com/nnnlog/"),
+                                          )
+                                        ]),
+                                        Row(children: [
+                                          Text("Repository: "),
+                                          InkWell(
+                                            child: Text(
+                                              "jaga_jindan",
+                                              style: TextStyle(
+                                                  color: Colors.blue,
+                                                  decoration:
+                                                  TextDecoration.underline),
+                                            ),
+                                            onTap: () =>
+                                                launch(
+                                                    "https://github.com/eduro-hcs/jaga_jindan"),
+                                          )
+                                        ]),
+                                        Row(children: [
+                                          Text("앱 버전: "),
+                                          InkWell(
+                                            child: Text(
+                                              appVer,
+                                              style: TextStyle(
+                                                  color: Colors.blue,
+                                                  decoration:
+                                                  TextDecoration.underline),
+                                            ),
+                                            onTap: () =>
+                                                launch(
+                                                    "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v${appVer}"),
+                                          )
+                                        ]),
+                                        Row(children: [
+                                          Text("최신 버전: "),
+                                          InkWell(
+                                            child: Text(
+                                              newVer,
+                                              style: TextStyle(
+                                                  color: Colors.blue,
+                                                  decoration:
+                                                  TextDecoration.underline),
+                                            ),
+                                            onTap: () =>
+                                                launch(
+                                                    "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v${newVer}"),
+                                          )
+                                        ]),
+                                      ],
                                     ),
-                                    Row(children: [
-                                      Text("개발자: "),
-                                      InkWell(
-                                        child: Text(
-                                          "엔로그 (nnnlog)",
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              decoration:
-                                                  TextDecoration.underline),
-                                        ),
-                                        onTap: () => launch(
-                                            "https://github.com/nnnlog/"),
-                                      )
-                                    ]),
-                                    Row(children: [
-                                      Text("Repository: "),
-                                      InkWell(
-                                        child: Text(
-                                          "jaga_jindan",
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              decoration:
-                                                  TextDecoration.underline),
-                                        ),
-                                        onTap: () => launch(
-                                            "https://github.com/eduro-hcs/jaga_jindan"),
-                                      )
-                                    ]),
-                                    Row(children: [
-                                      Text("앱 버전: "),
-                                      InkWell(
-                                        child: Text(
-                                          appVer,
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              decoration:
-                                                  TextDecoration.underline),
-                                        ),
-                                        onTap: () => launch(
-                                            "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v${appVer}"),
-                                      )
-                                    ]),
-                                    Row(children: [
-                                      Text("최신 버전: "),
-                                      InkWell(
-                                        child: Text(
-                                          newVer,
-                                          style: TextStyle(
-                                              color: Colors.blue,
-                                              decoration:
-                                                  TextDecoration.underline),
-                                        ),
-                                        onTap: () => launch(
-                                            "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v${newVer}"),
-                                      )
-                                    ]),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('닫기'),
+                                    ),
                                   ],
-                                ),
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('닫기'),
-                                ),
-                              ],
-                            );
-                          });
+                                );
+                              });
                         },
                       );
                     },
