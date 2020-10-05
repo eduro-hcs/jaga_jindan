@@ -7,6 +7,9 @@
 
 <h2 align="center">자가진단 자동화 앱</h2>
 
+## 사용법
+https://nnnlog.tistory.com/5
+
 
 ## Latest Release
 
