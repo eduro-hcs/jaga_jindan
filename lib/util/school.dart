@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/util/notify.dart';
 
-import 'file:///C:/Users/chansol/Desktop/flutter/jaga_jindan/jaga_jindan/lib/type/eduList.dart';
+import 'package:jaga_jindan/type/eduList.dart';
 
 class School {
   String name, address, code;
