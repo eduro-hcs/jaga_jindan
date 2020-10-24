@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/type/JagaJindanData.dart';
 import 'package:jaga_jindan/util/RSAEncrypt.dart';
@@ -81,11 +80,15 @@ void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
         }))
         .body);
 
-    var submittedDate = DateTime.parse(userInfo["registerDtm"]);
+    if (userInfo["registerDtm"] != null) {
+      var submittedDate = DateTime.parse(userInfo["registerDtm"]);
 
-    if (submittedDate.day == DateTime.now().day && byAutomatic && credentials.submitLimitation) {
-      showSurveyResult(false, "이미 제출한 기록이 있어 자동 제출을 취소했습니다.", credentials);
-      return;
+      if (submittedDate.day == DateTime.now().day &&
+          byAutomatic &&
+          credentials.submitLimitation) {
+        showSurveyResult(false, "이미 제출한 기록이 있어 자동 제출을 취소했습니다.", credentials);
+        return;
+      }
     }
 
     jwt = userInfo['token'];
@@ -111,7 +114,7 @@ void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
           'rspns14': null,
           'rspns15': null,
           'upperToken': jwt,
-          'upperUserNameEncpt': credentials.name
+          'upperUserNameEncpt': userInfo['userNameEncpt']
         }),
         headers: {'Authorization': jwt, 'Content-Type': 'application/json'});
 
@@ -122,6 +125,5 @@ void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
   } catch (e, s) {
     showSurveyResult(
         false, "인증 정보를 한번 더 확인해주세요.\n오류가 계속 발생하는 경우 개발자에게 알려주세요.", credentials);
-    //toast(e.toString());
   }
 }
