@@ -155,7 +155,8 @@ JagaJindanForm(MainPageState state) {
                           child: ListBody(
                             children: <Widget>[
                               Text('앱 시작 시 자가진단 설문을 제출합니다.'),
-                              Text('특정 시각마다 제출하는 기능은 계획 중에 있습니다.'),
+                              Text('특정 시각마다 제출하는 기능은 계획 중 입니다.'),
+                              Text('설정에서 "매일 한 번만 자동 제출" 옵션을 활성화하면 매일 한 번만 제출할 수 있습니다.'),
                             ],
                           ),
                         ),

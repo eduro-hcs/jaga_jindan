@@ -1,6 +1,6 @@
 class JagaJindanData {
   String name, birthday, school, edu, password;
-  bool force, agree = false, startup = false, useNotification = false;
+  bool force, agree = false, startup = false, useNotification = false, submitLimitation = false;
 
   static JagaJindanData readFromJSON(dynamic json) {
     return new JagaJindanData(
@@ -12,11 +12,13 @@ class JagaJindanData {
         json["force"] ?? false,
         json["agree"] ?? false,
         json["startup"] ?? false,
-        json["noti"] ?? false);
+        json["noti"] ?? false,
+        json["submitLimitation"] ?? false
+    );
   }
 
   JagaJindanData(this.name, this.birthday, this.school, this.edu, this.password,
-      this.force, this.agree, this.startup, this.useNotification);
+      this.force, this.agree, this.startup, this.useNotification, this.submitLimitation);
 
   dynamic toJSON() {
     return {
@@ -28,7 +30,8 @@ class JagaJindanData {
       "force": this.force,
       "agree": this.agree,
       "startup": this.startup,
-      "noti": this.useNotification
+      "noti": this.useNotification,
+      "submitLimitation": this.submitLimitation
     };
   }
 }

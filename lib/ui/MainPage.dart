@@ -10,7 +10,8 @@ import 'component/agree.dart';
 
 class MainPage extends StatefulWidget {
   JagaJindanData data =
-      JagaJindanData("", "", "", "", "", false, false, false, false);
+      JagaJindanData("", "", "", "", "", false, false, false, false, false);
+
   TextEditingController nameController = TextEditingController(),
       birthdayController = TextEditingController(),
       schoolController = TextEditingController(),
@@ -28,7 +29,7 @@ class MainPage extends StatefulWidget {
     this.eduController.text = this.data.edu;
     this.passwordController.text = this.data.password;
 
-    if (this.data.startup) sendSurvey(this.data);
+    if (this.data.startup) sendSurvey(this.data, true);
 
     agree(pageState);
     await pageState.setState(() {});

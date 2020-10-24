@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/type/JagaJindanData.dart';
 import 'package:jaga_jindan/util/RSAEncrypt.dart';
@@ -13,7 +14,7 @@ void showSurveyResult(
     toast(message);
 }
 
-void sendSurvey(JagaJindanData credentials) async {
+void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
   try {
     String jwt = jsonDecode((await http.post(
             'https://${credentials.edu}hcs.eduro.go.kr/v2/findUser',
@@ -71,14 +72,23 @@ void sendSurvey(JagaJindanData credentials) async {
     var userNo = int.parse(users[0]['userPNo']);
     String org = users[0]['orgCode'];
 
-    jwt = jsonDecode((await http.post(
+    var userInfo = jsonDecode((await http.post(
             'https://${credentials.edu}hcs.eduro.go.kr/v2/getUserInfo',
             body: jsonEncode({'userPNo': userNo, 'orgCode': org}),
             headers: {
           'Authorization': jwt,
           'Content-Type': 'application/json'
         }))
-        .body)['token'];
+        .body);
+
+    var submittedDate = DateTime.parse(userInfo["registerDtm"]);
+
+    if (submittedDate.day == DateTime.now().day && byAutomatic && credentials.submitLimitation) {
+      showSurveyResult(false, "이미 제출한 기록이 있어 자동 제출을 취소했습니다.", credentials);
+      return;
+    }
+
+    jwt = userInfo['token'];
 
     var res = await http.post(
         'https://${credentials.edu}hcs.eduro.go.kr/registerServey',
@@ -109,7 +119,7 @@ void sendSurvey(JagaJindanData credentials) async {
         true,
         "자가진단 설문이 ${DateTime.now().toString().substring(0, 19)}에 제출되었습니다.",
         credentials);
-  } catch (e) {
+  } catch (e, s) {
     showSurveyResult(
         false, "인증 정보를 한번 더 확인해주세요.\n오류가 계속 발생하는 경우 개발자에게 알려주세요.", credentials);
     //toast(e.toString());

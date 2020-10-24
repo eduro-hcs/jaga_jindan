@@ -47,6 +47,16 @@ showCredit(MainPageState state) async {
                         state.widget.writeJSON();
                       });
                     }),
+                CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('매일 한 번만 자동 제출'),
+                    value: state.widget.data.submitLimitation,
+                    onChanged: (bool value) {
+                      _setState(() {
+                        state.widget.data.submitLimitation = value;
+                        state.widget.writeJSON();
+                      });
+                    }),
                 Divider(
                   color: Colors.black38,
                   height: 50,

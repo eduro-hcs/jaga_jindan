@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jaga_jindan/ui/component/JagaJindanForm.dart';
-import 'package:jaga_jindan/ui/component/credit.dart';
+import 'package:jaga_jindan/ui/component/setting.dart';
 import 'package:jaga_jindan/util/school.dart';
 
 import 'package:jaga_jindan/util/sendSurvey.dart';
