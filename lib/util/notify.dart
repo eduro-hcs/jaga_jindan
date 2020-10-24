@@ -15,12 +15,10 @@ void toast(String message) {
 
 Future onDidReceiveLocalNotification(
     int id, String title, String body, String payload) async {
-  //toast(body + "|" + payload);
 }
 
 Future selectNotification(String payload) async {
   if (payload != null) {
-    //debugPrint('notification payload: ' + payload);
     toast(payload);
   }
 }
