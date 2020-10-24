@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:http/http.dart' as http;
+import 'package:jaga_jindan/util/notify.dart';
 
-import 'package:jaga_jindan/edu_list.dart';
-import 'package:jaga_jindan/send_survey.dart';
+import 'file:///C:/Users/chansol/Desktop/flutter/jaga_jindan/jaga_jindan/lib/type/eduList.dart';
 
 class School {
   String name, address, code;
@@ -13,7 +12,7 @@ class School {
 
   @override
   String toString() {
-    return "${name}<${address}>($code)";
+    return "$name<$address>($code)";
   }
 }
 
@@ -28,14 +27,14 @@ schulCrseScCode: 학교 종류 코드
 Future<List<School>> getSchoolList(
     String name, String region, String schulCrseScCode) async {
   try {
-    var res = jsonDecode((await http.get(
-        Uri.https("hcs.eduro.go.kr", "/v2/searchSchool", {
-          'lctnScCode': EDU_LIST[region],
-          'schulCrseScCode': schulCrseScCode,
-          'orgName': name,
-          'loginType': 'school'
-        })))
-        .body);
+    var res = jsonDecode(
+        (await http.get(Uri.https("hcs.eduro.go.kr", "/v2/searchSchool", {
+      'lctnScCode': EDU_LIST[region],
+      'schulCrseScCode': schulCrseScCode,
+      'orgName': name,
+      'loginType': 'school'
+    })))
+            .body);
 
     if (res["sizeover"]) toast("검색 결과가 많습니다.\n학교 이름을 정확히 입력해주세요.");
     List<School> ret = [];
@@ -46,5 +45,4 @@ Future<List<School>> getSchoolList(
   } catch (e) {
     return [];
   }
-
 }

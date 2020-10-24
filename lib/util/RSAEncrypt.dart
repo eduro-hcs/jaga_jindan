@@ -2,7 +2,8 @@ import 'package:encrypt/encrypt.dart';
 
 String encrypt(String plain) {
   final parser = RSAKeyParser();
-  final encrypter = Encrypter(RSA(publicKey: parser.parse('''-----BEGIN PUBLIC KEY-----
+  final encrypter =
+      Encrypter(RSA(publicKey: parser.parse('''-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA81dCnCKt0NVH7j5Oh2+S
 GgEU0aqi5u6sYXemouJWXOlZO3jqDsHYM1qfEjVvCOmeoMNFXYSXdNhflU7mjWP8
 jWUmkYIQ8o3FGqMzsMTNxr+bAp0cULWu9eYmycjJwWIxxB7vUwvpEUNicgW7v5nC
