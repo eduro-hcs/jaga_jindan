@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/type/JagaJindanData.dart';
 import 'package:jaga_jindan/util/RSAEncrypt.dart';
@@ -28,34 +29,34 @@ void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
             encoding: Encoding.getByName('utf-8')))
         .body)['token'];
 
-    if (!credentials.force) {
-      if ((await http.post(
-                  'https://${credentials.edu}hcs.eduro.go.kr/v2/hasPassword',
-                  body: jsonEncode({}),
-                  headers: {
-                'Authorization': jwt,
-                'Content-Type': 'application/json'
-              }))
-              .body !=
-          'true') {
-        showSurveyResult(false, '자가진단 페이지에서 초기 비밀번호를 설정하세요.', credentials);
-        return;
-      }
-
-      if ((await http.post(
-                  'https://${credentials.edu}hcs.eduro.go.kr/v2/validatePassword',
-                  body: jsonEncode({'deviceUuid': '', 'password': encrypt(credentials.password)}),
-                  headers: {
-                'Authorization': jwt,
-                'Content-Type': 'application/json'
-              }))
-              .body !=
-          'true') {
-        showSurveyResult(
-            false, '비밀번호를 잘못 입력했거나 로그인 시도 횟수를 초과했습니다.', credentials);
-        return;
-      }
+    if ((await http.post(
+                'https://${credentials.edu}hcs.eduro.go.kr/v2/hasPassword',
+                body: jsonEncode({}),
+                headers: {
+              'Authorization': jwt,
+              'Content-Type': 'application/json'
+            }))
+            .body !=
+        'true') {
+      showSurveyResult(false, '자가진단 페이지에서 초기 비밀번호를 설정하세요.', credentials);
+      return;
     }
+
+    jwt = (await http.post(
+            'https://${credentials.edu}hcs.eduro.go.kr/v2/validatePassword',
+            body: jsonEncode(
+                {'deviceUuid': '', 'password': encrypt(credentials.password)}),
+            headers: {
+          'Authorization': jwt,
+          'Content-Type': 'application/json'
+        }))
+        .body;
+
+    if (!jwt.contains('Bearer')) {
+      showSurveyResult(false, '비밀번호를 잘못 입력했거나 로그인 시도 횟수를 초과했습니다.', credentials);
+      return;
+    }
+    jwt = jwt.replaceAll('"', "");
 
     var users = jsonDecode((await http.post(
             'https://${credentials.edu}hcs.eduro.go.kr/v2/selectUserGroup',
@@ -123,6 +124,7 @@ void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
         "자가진단 설문이 ${DateTime.now().toString().substring(0, 19)}에 제출되었습니다.",
         credentials);
   } catch (e, s) {
+    debugPrint(e.toString());
     showSurveyResult(
         false, "인증 정보를 한번 더 확인해주세요.\n오류가 계속 발생하는 경우 개발자에게 알려주세요.", credentials);
   }
