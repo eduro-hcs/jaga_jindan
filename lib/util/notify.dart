@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void toast(String message) {
   Fluttertoast.showToast(
@@ -14,12 +15,13 @@ void toast(String message) {
 }
 
 Future onDidReceiveLocalNotification(
-    int id, String title, String body, String payload) async {
-}
+    int id, String title, String body, String payload) async {}
 
 Future selectNotification(String payload) async {
   if (payload != null) {
-    toast(payload);
+    if (payload.startsWith("https://") || payload.startsWith("http://")) {
+      launch(payload);
+    } else toast(payload);
   }
 }
 
@@ -62,7 +64,8 @@ void initNotification() async {
 
 var notiId = 0;
 
-void noti(String title, String desc) async {
+void noti(String title, String desc, [String payload = ""]) async {
+  if (payload == "") payload = desc;
   await flutterLocalNotificationsPlugin
-      .show(notiId++, title, desc, platformChannelSpecifics, payload: desc);
+      .show(notiId++, title, desc, platformChannelSpecifics, payload: payload);
 }

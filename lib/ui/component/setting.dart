@@ -1,37 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/ui/MainPageState.dart';
-import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-showCredit(MainPageState state) async {
-  var appVer = (await PackageInfo.fromPlatform()).version, first = false;
-  var newVer = "불러오는 중";
-
+showCredit(MainPageState state, String appVer, String newVer) async {
   showDialog<void>(
     context: state.context,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return StatefulBuilder(builder: (context, StateSetter _setState) {
-        if (!first) {
-          http
-              .get(
-                  "https://api.github.com/repos/eduro-hcs/jaga_jindan/releases/latest")
-              .then((data) {
-            try {
-              _setState(() {
-                newVer = jsonDecode(data.body)["tag_name"];
-                newVer = newVer.substring(1);
-              });
-            } catch (e) {
-              newVer = "(error)";
-            }
-          });
-          first = true;
-        }
-
         return AlertDialog(
           title: Text('설정 및 정보'),
           content: SingleChildScrollView(
