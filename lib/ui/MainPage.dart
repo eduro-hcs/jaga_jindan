@@ -10,14 +10,13 @@ import 'component/agree.dart';
 
 class MainPage extends StatefulWidget {
   JagaJindanData data =
-      JagaJindanData("", "", "", "", "", false, false, false, false, false);
+      JagaJindanData("", "", "", "", "", false, false, false, false);
 
   TextEditingController nameController = TextEditingController(),
       birthdayController = TextEditingController(),
       schoolController = TextEditingController(),
       eduController = TextEditingController(),
-      passwordController = TextEditingController(),
-      forceController = TextEditingController();
+      passwordController = TextEditingController();
 
   MainPageState pageState;
 

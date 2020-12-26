@@ -85,59 +85,7 @@ JagaJindanForm(MainPageState state) {
                 state.widget.writeJSON();
               },
               controller: state.widget.passwordController,
-            ),
-            visible: !state.widget.data.force,
-          ),
-          CheckboxListTile(
-            title: const Text('비밀번호 없이 설문 제출'),
-            value: state.widget.data.force,
-            onChanged: (bool value) {
-              state.setState(() {
-                if (value) {
-                  showDialog<void>(
-                    context: state.context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('경고'),
-                        content: SingleChildScrollView(
-                          child: ListBody(
-                            children: <Widget>[
-                              Text('비밀번호 없이 설문을 제출할 수 있습니다.'),
-                              Text('위 기능을 사용함으로써 발생하는 모든 책임은 사용자에게 있습니다.'),
-                            ],
-                          ),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('계속하기'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              state.widget.data.password = "";
-                              state.widget.passwordController.text = "";
-
-                              state.setState(() {
-                                state.widget.data.force = true;
-                                state.widget.writeJSON();
-                              });
-                            },
-                          ),
-                          FlatButton(
-                            child: Text('끄기'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  state.widget.data.force = false;
-                  state.widget.writeJSON();
-                }
-              });
-            },
+            )
           ),
           CheckboxListTile(
             title: const Text('앱 시작 시 자가진단 제출'),
