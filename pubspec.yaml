@@ -20,6 +20,7 @@ dependencies:
   flutter_local_notifications: ^3.0.2
   url_launcher: ^5.7.10
   package_info: ^0.4.3+2
+  background_fetch: ^0.6.0
 
 dev_dependencies:
   flutter_test:

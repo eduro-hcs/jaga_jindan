@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,19 +14,48 @@ import 'package:package_info/package_info.dart';
 
 import 'MainPage.dart';
 
+survey() async {
+
+}
+
+void backgroundFetchHeadlessTask(String taskId) async {
+  survey();
+
+  BackgroundFetch.scheduleTask(TaskConfig(
+      enableHeadless: true,
+      startOnBoot: true,
+      stopOnTerminate: false,
+      taskId: 'com.nnnlog.survey', delay: 10000)); //TODO
+}
+
 class MainPageState extends State<MainPage> {
   final formKey = GlobalKey<FormState>();
   String edu = "서울특별시", school = "1", selectedSchoolCode = "";
   List<School> schools = [];
-  bool flag = false;
+  bool flag = false, initBackground = false;
   String appVer, newVer = "불러오는 중";
 
   TextEditingController searchSchoolController;
+
+  Future<void> initBackgroundService() async {
+    if (!initBackground) {
+      BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+
+      BackgroundFetch.scheduleTask(TaskConfig(
+          enableHeadless: true,
+          startOnBoot: true,
+          stopOnTerminate: false,
+          taskId: 'com.nnnlog.survey',
+          delay: 1000));
+    }
+    initBackground = true;
+  }
 
   @override
   Widget build(BuildContext context) {
     this.widget.pageState = this;
     searchSchoolController = TextEditingController();
+    initBackgroundService();
 
     if (!flag) {
       PackageInfo.fromPlatform().then((value) => setState(() {
@@ -50,9 +81,6 @@ class MainPageState extends State<MainPage> {
       });
     }
     flag = true;
-
-    //debugPrint(appVer);
-    //debugPrint(newVer);
 
     return Scaffold(
         appBar: AppBar(

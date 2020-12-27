@@ -75,7 +75,7 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                           decoration: TextDecoration.underline),
                     ),
                     onTap: () => launch(
-                        "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v${appVer}"),
+                        "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v$appVer"),
                   )
                 ]),
                 Row(children: [
@@ -88,7 +88,7 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                           decoration: TextDecoration.underline),
                     ),
                     onTap: () => launch(
-                        "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v${newVer}"),
+                        "https://github.com/eduro-hcs/jaga_jindan/releases/tag/v$newVer"),
                   )
                 ]),
               ],
