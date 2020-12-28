@@ -1,3 +1,4 @@
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:jaga_jindan/ui/MainPageState.dart';
 import 'package:jaga_jindan/util/sendSurvey.dart';
@@ -37,51 +38,74 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                         state.widget.writeJSON();
                       });
                     }),
-                Row(children: <Widget>[
-                  new Flexible(
-                      child: new FocusScope(
-                          node: new FocusScopeNode(),
-                          canRequestFocus: false,
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                                hintText: "자가진단 자동 제출 시간"),
-                            controller: state.widget.timeController,
-                          ))),
-                  FlatButton(
-                    child: Icon(Icons.alarm),
-                    onPressed: () async {
-                      final TimeOfDay picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.fromDateTime(
-                            tz.TZDateTime.now(tz.getLocation('Asia/Seoul'))),
-                      );
-
+                CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('자동 제출 활성화'),
+                    value: state.widget.data.autoSubmit,
+                    onChanged: (bool value) {
+                      if (!(value is bool)) return;
                       _setState(() {
-                        var today =
+                        state.widget.data.autoSubmit = value;
+                        state.widget.data.submitTime =
                             tz.TZDateTime.now(tz.getLocation('Asia/Seoul'));
-
-                        state.widget.data.submitTime = tz.TZDateTime.from(
-                            new tz.TZDateTime(
-                                tz.getLocation('Asia/Seoul'),
-                                today.year,
-                                today.month,
-                                today.day,
-                                picked.hour,
-                                picked.minute),
-                            tz.getLocation('Asia/Seoul'));
                         state.widget.timeController.text =
-                            "${state.widget.data.submitTime.hour}:${state.widget.data.submitTime.hour}";
-                        state.widget.writeJSON();
+                            "${state.widget.data.submitTime.hour}:${state.widget.data.submitTime.minute}";
 
-                        setBackgroundProcess(state.widget.data);
+                        print(state.widget.timeController.text);
+                        state.widget.writeJSON();
                       });
-                    },
-                    minWidth: 0,
-                    height: 0,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding: EdgeInsets.all(3),
-                  ),
-                ]),
+
+                      if (value) setBackgroundProcess(state.widget.data);
+                      else BackgroundFetch.stop("com.nnnlog.survey");
+                    }),
+                Visibility(
+                  child: Row(children: <Widget>[
+                    new Flexible(
+                        child: new FocusScope(
+                            node: new FocusScopeNode(),
+                            canRequestFocus: false,
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                  hintText: "자가진단 자동 제출 시간"),
+                              controller: state.widget.timeController,
+                            ))),
+                    FlatButton(
+                      child: Icon(Icons.alarm),
+                      onPressed: () async {
+                        final TimeOfDay picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(
+                              state.widget.data.submitTime),
+                        );
+
+                        _setState(() {
+                          var today =
+                              tz.TZDateTime.now(tz.getLocation('Asia/Seoul'));
+
+                          state.widget.data.submitTime = tz.TZDateTime.from(
+                              new tz.TZDateTime(
+                                  tz.getLocation('Asia/Seoul'),
+                                  today.year,
+                                  today.month,
+                                  today.day,
+                                  picked.hour,
+                                  picked.minute),
+                              tz.getLocation('Asia/Seoul'));
+                          state.widget.timeController.text =
+                              "${state.widget.data.submitTime.hour}:${state.widget.data.submitTime.minute}";
+                          state.widget.writeJSON();
+
+                          setBackgroundProcess(state.widget.data);
+                        });
+                      },
+                      minWidth: 0,
+                      height: 0,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: EdgeInsets.all(3),
+                    ),
+                  ]),
+                  visible: state.widget.data.autoSubmit,
+                ),
                 Divider(
                   color: Colors.black38,
                   height: 50,

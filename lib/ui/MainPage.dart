@@ -10,7 +10,7 @@ import 'component/agree.dart';
 
 class MainPage extends StatefulWidget {
   JagaJindanData data =
-      JagaJindanData("", "", "", "", "", false, false, false, false, null);
+      JagaJindanData("", "", "", "", "", false, false, false, false, false, null);
 
   TextEditingController nameController = TextEditingController(),
       birthdayController = TextEditingController(),
@@ -34,7 +34,7 @@ class MainPage extends StatefulWidget {
 
     setBackgroundProcess(this.data);
 
-    if (this.data.startup) sendSurvey(this.data, true);
+    //if (this.data.startup) sendSurvey(this.data, true);
 
     agree(pageState);
     pageState.setState(() {});

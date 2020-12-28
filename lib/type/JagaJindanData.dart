@@ -5,7 +5,7 @@ class JagaJindanData {
   bool agree = false,
       startup = false,
       useNotification = false,
-      submitLimitation = false;
+      submitLimitation = false, autoSubmit = false;
   tz.TZDateTime submitTime;
 
   static JagaJindanData readFromJSON(dynamic json) {
@@ -23,6 +23,7 @@ class JagaJindanData {
         json["startup"] ?? false,
         json["noti"] ?? false,
         json["submitLimitation"] ?? false,
+        json["autoSubmit"] ?? false,
         tm);
   }
 
@@ -36,6 +37,7 @@ class JagaJindanData {
       this.startup,
       this.useNotification,
       this.submitLimitation,
+      this.autoSubmit,
       this.submitTime);
 
   dynamic toJSON() {
@@ -49,6 +51,7 @@ class JagaJindanData {
       "startup": this.startup,
       "noti": this.useNotification,
       "submitLimitation": this.submitLimitation,
+      "autoSubmit": this.autoSubmit,
       "submitTime": this.submitTime?.toString()
     };
   }

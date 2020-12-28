@@ -87,7 +87,7 @@ JagaJindanForm(MainPageState state) {
               controller: state.widget.passwordController,
             )
           ),
-          CheckboxListTile(
+          /*CheckboxListTile(
             title: const Text('앱 시작 시 자가진단 제출'),
             value: state.widget.data.startup,
             onChanged: (bool value) {
@@ -137,7 +137,7 @@ JagaJindanForm(MainPageState state) {
                 }
               });
             },
-          ),
+          ),*/
         ],
       ));
 }
