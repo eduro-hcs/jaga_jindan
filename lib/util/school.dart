@@ -29,7 +29,7 @@ Future<List<School>> getSchoolList(
   try {
     var res = jsonDecode(
         (await http.get(Uri.https("hcs.eduro.go.kr", "/v2/searchSchool", {
-      'lctnScCode': EDU_LIST[region],
+      'lctnScCode': EDU_LIST[region].toString(),
       'schulCrseScCode': schulCrseScCode,
       'orgName': name,
       'loginType': 'school'

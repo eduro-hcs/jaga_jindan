@@ -25,6 +25,7 @@ searchSchool(MainPageState state) {
                           DropdownMenuItem(child: Text(e.key), value: e.key))
                       .toList(),
                   onChanged: (String value) {
+                    if (!(value is String)) return;
                     _setState(() {
                       state.edu = value;
                     });
@@ -54,6 +55,7 @@ searchSchool(MainPageState state) {
                           ))
                       .toList(),
                   onChanged: (String value) {
+                    if (!(value is String)) return;
                     _setState(() {
                       state.school = value;
                     });
@@ -79,7 +81,7 @@ searchSchool(MainPageState state) {
                           state.searchSchoolController.text,
                           state.edu,
                           state.school);
-                      //for (var s in tmp) toast(s.code);
+
                       //tmp = [];
                       _setState(() {
                         state.schools = tmp;
@@ -115,6 +117,7 @@ searchSchool(MainPageState state) {
                               ))
                       .toList(),
                   onChanged: (String value) {
+                    if (!(value is String)) return;
                     _setState(() {
                       state.selectedSchoolCode = value;
                     });
@@ -140,7 +143,7 @@ searchSchool(MainPageState state) {
                   return;
                 }
                 state.widget.data.school = state.selectedSchoolCode;
-                state.widget.data.edu = URL_LIST[state.edu];
+                state.widget.data.edu = URL_LIST[state.edu].toString();
                 state.widget.writeJSON();
                 state.setState(() {
                   state.widget.schoolController.text = state.selectedSchoolCode;

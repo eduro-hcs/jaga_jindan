@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 0.3.0
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.11.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^5.7.10
   package_info: ^0.4.3+2
   background_fetch: ^0.6.0
+  timezone: ^0.5.9
 
 dev_dependencies:
   flutter_test:

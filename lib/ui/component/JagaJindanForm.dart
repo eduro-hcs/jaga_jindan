@@ -13,12 +13,12 @@ JagaJindanForm(MainPageState state) {
               style: TextStyle(
                   //color: Colors.black,
                   fontSize:
-                      Theme.of(state.context).textTheme.headline4.fontSize)),
+                      Theme.of(state.context).textTheme.headline4?.fontSize)),
           new Padding(padding: EdgeInsets.only(bottom: 50)),
           TextFormField(
             decoration: const InputDecoration(hintText: "이름을 입력하세요."),
-            validator: (value) {
-              if (value.isEmpty) {
+            validator: (String value) {
+              if (value?.isEmpty == true) {
                 return "이름을 입력하세요.";
               }
               return null;
@@ -38,7 +38,7 @@ JagaJindanForm(MainPageState state) {
             decoration:
                 const InputDecoration(hintText: "생년월일을 입력하세요. (YYMMDD)"),
             validator: (value) {
-              if (value.length != 6) {
+              if (value?.length != 6) {
                 return "생년월일을 올바르게 입력하세요.";
               }
               return null;
@@ -75,7 +75,7 @@ JagaJindanForm(MainPageState state) {
               decoration: const InputDecoration(hintText: "비밀번호를 입력하세요."),
               obscureText: true,
               validator: (value) {
-                if (value.length != 4) {
+                if (value?.length != 4) {
                   return "비밀번호 4자리를 입력하세요.";
                 }
                 return null;
@@ -91,6 +91,7 @@ JagaJindanForm(MainPageState state) {
             title: const Text('앱 시작 시 자가진단 제출'),
             value: state.widget.data.startup,
             onChanged: (bool value) {
+              if (!(value is bool)) return;
               state.setState(() {
                 if (value) {
                   showDialog<void>(

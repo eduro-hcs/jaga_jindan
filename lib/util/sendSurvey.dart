@@ -1,10 +1,56 @@
 import 'dart:convert';
 
+import 'package:background_fetch/background_fetch.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/type/JagaJindanData.dart';
 import 'package:jaga_jindan/util/RSAEncrypt.dart';
+import 'package:jaga_jindan/util/internalIO.dart';
 import 'package:jaga_jindan/util/notify.dart';
+import 'package:timezone/standalone.dart' as tz;
+
+void backgroundFetchHeadlessTask(String taskId) async {
+  BackgroundFetch.stop(taskId);
+  try {
+    JagaJindanData dat = JagaJindanData.readFromJSON(await readInternal());
+    if (dat != null && taskId == 'com.nnnlog.survey') sendSurvey(dat, true);
+  } catch (e) {} finally {
+    BackgroundFetch.scheduleTask(TaskConfig(
+        enableHeadless: true,
+        startOnBoot: true,
+        stopOnTerminate: false,
+        requiresStorageNotLow: true,
+        requiredNetworkType: NetworkType.ANY,
+        taskId: 'com.nnnlog.survey',
+        delay: (3600 * 24) * 1000));
+  }
+}
+
+void setBackgroundProcess(JagaJindanData dat) {
+  var tm = dat.submitTime;
+  if (tm == null || tm.minute == null || tm.hour == null) return;
+
+  BackgroundFetch.stop("com.nnnlog.survey");
+
+  DateTime currTime = tz.TZDateTime.now(tz.getLocation('Asia/Seoul')), target = tm.add(Duration());
+
+  if (target.isBefore(currTime)) {
+    target = target.add(Duration(days: 1));
+  }
+
+  var diff = target.difference(currTime);
+
+  BackgroundFetch.scheduleTask(TaskConfig(
+      enableHeadless: true,
+      startOnBoot: true,
+      stopOnTerminate: false,
+      requiresStorageNotLow: true,
+      requiredNetworkType: NetworkType.ANY,
+      taskId: 'com.nnnlog.survey',
+      delay:
+          (diff.inHours * 3600 + diff.inMinutes * 60 + diff.inSeconds) * 1000));
+}
 
 void showSurveyResult(
     bool success, String message, JagaJindanData credentials) {
@@ -124,7 +170,6 @@ void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
         "자가진단 설문이 ${DateTime.now().toString().substring(0, 19)}에 제출되었습니다.",
         credentials);
   } catch (e, s) {
-    debugPrint(e.toString());
     showSurveyResult(
         false, "인증 정보를 한번 더 확인해주세요.\n오류가 계속 발생하는 경우 개발자에게 알려주세요.", credentials);
   }

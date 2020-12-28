@@ -5,6 +5,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:jaga_jindan/type/JagaJindanData.dart';
 import 'package:jaga_jindan/ui/component/JagaJindanForm.dart';
 import 'package:jaga_jindan/ui/component/setting.dart';
 import 'package:jaga_jindan/util/notify.dart';
@@ -13,20 +14,6 @@ import 'package:jaga_jindan/util/sendSurvey.dart';
 import 'package:package_info/package_info.dart';
 
 import 'MainPage.dart';
-
-survey() async {
-
-}
-
-void backgroundFetchHeadlessTask(String taskId) async {
-  survey();
-
-  BackgroundFetch.scheduleTask(TaskConfig(
-      enableHeadless: true,
-      startOnBoot: true,
-      stopOnTerminate: false,
-      taskId: 'com.nnnlog.survey', delay: 10000)); //TODO
-}
 
 class MainPageState extends State<MainPage> {
   final formKey = GlobalKey<FormState>();
@@ -40,13 +27,6 @@ class MainPageState extends State<MainPage> {
   Future<void> initBackgroundService() async {
     if (!initBackground) {
       BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-
-      BackgroundFetch.scheduleTask(TaskConfig(
-          enableHeadless: true,
-          startOnBoot: true,
-          stopOnTerminate: false,
-          taskId: 'com.nnnlog.survey',
-          delay: 1000));
     }
     initBackground = true;
   }
@@ -110,7 +90,7 @@ class MainPageState extends State<MainPage> {
                     alignment: Alignment.bottomRight,
                     child: FloatingActionButton(
                       onPressed: () {
-                        if (formKey.currentState.validate()) {
+                        if (formKey.currentState?.validate() == true) {
                           sendSurvey(this.widget.data);
                         }
                       },
