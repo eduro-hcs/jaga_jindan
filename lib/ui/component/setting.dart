@@ -46,17 +46,18 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                       if (!(value is bool)) return;
                       _setState(() {
                         state.widget.data.autoSubmit = value;
-                        state.widget.data.submitTime =
+                        var tm = state.widget.data.submitTime =
                             tz.TZDateTime.now(tz.getLocation('Asia/Seoul'));
                         state.widget.timeController.text =
-                            "${state.widget.data.submitTime.hour}:${state.widget.data.submitTime.minute}";
+                            "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
 
-                        print(state.widget.timeController.text);
                         state.widget.writeJSON();
                       });
 
-                      if (value) setBackgroundProcess(state.widget.data);
-                      else BackgroundFetch.stop("com.nnnlog.survey");
+                      if (value)
+                        setBackgroundProcess(state.widget.data);
+                      else
+                        BackgroundFetch.stop("com.nnnlog.survey");
                     }),
                 Visibility(
                   child: Row(children: <Widget>[
@@ -82,17 +83,18 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                           var today =
                               tz.TZDateTime.now(tz.getLocation('Asia/Seoul'));
 
-                          state.widget.data.submitTime = tz.TZDateTime.from(
-                              new tz.TZDateTime(
-                                  tz.getLocation('Asia/Seoul'),
-                                  today.year,
-                                  today.month,
-                                  today.day,
-                                  picked.hour,
-                                  picked.minute),
-                              tz.getLocation('Asia/Seoul'));
+                          var tm = state.widget.data.submitTime =
+                              tz.TZDateTime.from(
+                                  new tz.TZDateTime(
+                                      tz.getLocation('Asia/Seoul'),
+                                      today.year,
+                                      today.month,
+                                      today.day,
+                                      picked.hour,
+                                      picked.minute),
+                                  tz.getLocation('Asia/Seoul'));
                           state.widget.timeController.text =
-                              "${state.widget.data.submitTime.hour}:${state.widget.data.submitTime.minute}";
+                              "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
                           state.widget.writeJSON();
 
                           setBackgroundProcess(state.widget.data);

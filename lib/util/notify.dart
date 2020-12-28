@@ -21,43 +21,53 @@ Future selectNotification(String payload) async {
   if (payload != null) {
     if (payload.startsWith("https://") || payload.startsWith("http://")) {
       launch(payload);
-    } else toast(payload);
+    } else
+      toast(payload);
   }
 }
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
-final IOSInitializationSettings initializationSettingsIOS =
-    IOSInitializationSettings(
-  requestSoundPermission: false,
-  requestBadgePermission: false,
-  requestAlertPermission: false,
-  onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-);
-final MacOSInitializationSettings initializationSettingsMacOS =
-    MacOSInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false);
-final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS,
-    macOS: initializationSettingsMacOS);
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-        'com.nlog.flutterlocalnotifications.ScheduledNotificationBootReceiver',
-        '자가진단 자동화',
-        '자동으로 자가진단 설문을 제출합니다.',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: false);
-const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+MacOSInitializationSettings initializationSettingsMacOS;
 
-void initNotification() async {
+AndroidNotificationDetails androidPlatformChannelSpecifics;
+
+NotificationDetails platformChannelSpecifics;
+
+Future<void> initNotification() async {
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('app_icon');
+  IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings(
+    requestSoundPermission: false,
+    requestBadgePermission: false,
+    requestAlertPermission: false,
+    onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+  );
+
+  initializationSettingsMacOS = MacOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false);
+
+  InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+      macOS: initializationSettingsMacOS);
+
+  androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'com.nlog.flutterlocalnotifications.ScheduledNotificationBootReceiver',
+      '자가진단 자동화',
+      '자동으로 자가진단 설문을 제출합니다.',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false);
+
+  platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: selectNotification);
 }

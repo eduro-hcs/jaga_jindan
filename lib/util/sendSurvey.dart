@@ -1,39 +1,53 @@
 import 'dart:convert';
 
 import 'package:background_fetch/background_fetch.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/type/JagaJindanData.dart';
 import 'package:jaga_jindan/util/RSAEncrypt.dart';
 import 'package:jaga_jindan/util/internalIO.dart';
 import 'package:jaga_jindan/util/notify.dart';
 import 'package:timezone/standalone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tzInit;
+
+const SURVEY_TASK_ID = "com.nlog.jaga_jindan.survey";
+const FB_TASK_ID = "com.nlog.jaga_jindan.fb";
 
 void backgroundFetchHeadlessTask(String taskId) async {
-  BackgroundFetch.stop(taskId);
   try {
+    await Future.any([
+      initNotification(),
+      Future.delayed(const Duration(seconds: 5))
+    ]);
+
+    tzInit.initializeTimeZones();
+
+    BackgroundFetch.stop(taskId);
     JagaJindanData dat = JagaJindanData.readFromJSON(await readInternal());
-    if (dat != null && taskId == 'com.nnnlog.survey') sendSurvey(dat, true);
-  } catch (e) {} finally {
+    if (dat != null) {
+      if (taskId == SURVEY_TASK_ID) sendSurvey(dat, true);
+      setBackgroundProcess(dat);
+    }
+  } catch (e) {
+    noti("오류가 발생했습니다.", "자동 제출을 활성화하려면 앱을 켜주세요.");
+  } finally {
     BackgroundFetch.scheduleTask(TaskConfig(
         enableHeadless: true,
         startOnBoot: true,
         stopOnTerminate: false,
-        requiresStorageNotLow: true,
-        requiredNetworkType: NetworkType.ANY,
-        taskId: 'com.nnnlog.survey',
-        delay: (3600 * 24) * 1000));
+        taskId: FB_TASK_ID,
+        forceAlarmManager: true,
+        delay: (30 * 1000)));
   }
 }
 
 void setBackgroundProcess(JagaJindanData dat) {
+  BackgroundFetch.stop(SURVEY_TASK_ID);
+
   var tm = dat.submitTime;
   if (tm == null || tm.minute == null || tm.hour == null) return;
 
-  BackgroundFetch.stop("com.nnnlog.survey");
-
-  DateTime currTime = tz.TZDateTime.now(tz.getLocation('Asia/Seoul')), target = tm.add(Duration());
+  DateTime currTime = tz.TZDateTime.now(tz.getLocation('Asia/Seoul')),
+      target = tm.add(Duration());
 
   if (target.isBefore(currTime)) {
     target = target.add(Duration(days: 1));
@@ -45,11 +59,10 @@ void setBackgroundProcess(JagaJindanData dat) {
       enableHeadless: true,
       startOnBoot: true,
       stopOnTerminate: false,
-      requiresStorageNotLow: true,
-      requiredNetworkType: NetworkType.ANY,
-      taskId: 'com.nnnlog.survey',
+      taskId: SURVEY_TASK_ID,
+      forceAlarmManager: true,
       delay:
-          (diff.inHours * 3600 + diff.inMinutes * 60 + diff.inSeconds) * 1000));
+          diff.inSeconds * 1000));
 }
 
 void showSurveyResult(

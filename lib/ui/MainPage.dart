@@ -30,7 +30,7 @@ class MainPage extends StatefulWidget {
     this.passwordController.text = this.data.password;
 
     var tm = this.data.submitTime;
-    if (tm.minute != null && tm.hour != null) this.timeController.text = "${tm.hour}:${tm.hour}";
+    if (tm.minute != null && tm.hour != null) this.timeController.text = "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
 
     setBackgroundProcess(this.data);
 
