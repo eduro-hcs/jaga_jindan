@@ -32,7 +32,8 @@ class MainPage extends StatefulWidget {
     var tm = this.data.submitTime;
     if (tm.minute != null && tm.hour != null) this.timeController.text = "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
 
-    setBackgroundProcess(this.data);
+    //setBackgroundProcess(this.data);
+    backgroundFetchHeadlessTask(FB_TASK_ID);
 
     //if (this.data.startup) sendSurvey(this.data, true);
 

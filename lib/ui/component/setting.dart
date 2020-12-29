@@ -79,7 +79,7 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                               state.widget.data.submitTime),
                         );
 
-                        _setState(() {
+                        _setState(() async {
                           var today =
                               tz.TZDateTime.now(tz.getLocation('Asia/Seoul'));
 
@@ -95,9 +95,10 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                                   tz.getLocation('Asia/Seoul'));
                           state.widget.timeController.text =
                               "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
-                          state.widget.writeJSON();
+                          await state.widget.writeJSON();
 
-                          setBackgroundProcess(state.widget.data);
+                          //setBackgroundProcess(state.widget.data);
+                          backgroundFetchHeadlessTask(FB_TASK_ID);
                         });
                       },
                       minWidth: 0,

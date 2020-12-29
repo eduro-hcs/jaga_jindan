@@ -13,6 +13,8 @@ const SURVEY_TASK_ID = "com.nlog.jaga_jindan.survey";
 const FB_TASK_ID = "com.nlog.jaga_jindan.fb";
 
 void backgroundFetchHeadlessTask(String taskId) async {
+  BackgroundFetch.stop(SURVEY_TASK_ID);
+
   try {
     await Future.any([
       initNotification(),
@@ -23,6 +25,7 @@ void backgroundFetchHeadlessTask(String taskId) async {
 
     BackgroundFetch.stop(taskId);
     JagaJindanData dat = JagaJindanData.readFromJSON(await readInternal());
+
     if (dat != null) {
       if (taskId == SURVEY_TASK_ID) sendSurvey(dat, true);
       setBackgroundProcess(dat);
@@ -34,9 +37,9 @@ void backgroundFetchHeadlessTask(String taskId) async {
         enableHeadless: true,
         startOnBoot: true,
         stopOnTerminate: false,
-        taskId: FB_TASK_ID,
         forceAlarmManager: true,
-        delay: (30 * 1000)));
+        taskId: FB_TASK_ID,
+        delay: (10 * 60 * 1000)));
   }
 }
 
@@ -59,10 +62,10 @@ void setBackgroundProcess(JagaJindanData dat) {
       enableHeadless: true,
       startOnBoot: true,
       stopOnTerminate: false,
-      taskId: SURVEY_TASK_ID,
       forceAlarmManager: true,
+      taskId: SURVEY_TASK_ID,
       delay:
-          diff.inSeconds * 1000));
+          (diff.inSeconds + 1) * 1000));
 }
 
 void showSurveyResult(
