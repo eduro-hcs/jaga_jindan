@@ -82,7 +82,6 @@ searchSchool(MainPageState state) {
                           state.edu,
                           state.school);
 
-                      //tmp = [];
                       _setState(() {
                         state.schools = tmp;
                         if (tmp.isEmpty) {
@@ -99,14 +98,7 @@ searchSchool(MainPageState state) {
                     padding: EdgeInsets.all(3),
                   )
                 ]),
-                Divider(
-                  color: Colors.black38,
-                  height: 50,
-                  thickness: 1,
-                  indent: 0,
-                  endIndent: 0,
-                ),
-                //Text("검색 결과")
+                Container(margin: EdgeInsets.all(5),),
                 DropdownButton<String>(
                   icon: Icon(Icons.keyboard_arrow_down),
                   items: state.schools
