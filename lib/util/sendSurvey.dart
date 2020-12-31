@@ -13,7 +13,7 @@ const SURVEY_TASK_ID = "com.nlog.jaga_jindan.survey";
 const FB_TASK_ID = "com.nlog.jaga_jindan.fb";
 
 void backgroundFetchHeadlessTask(String taskId) async {
-  BackgroundFetch.stop(SURVEY_TASK_ID);
+  await BackgroundFetch.stop(SURVEY_TASK_ID);
 
   try {
     await Future.any([
@@ -23,17 +23,22 @@ void backgroundFetchHeadlessTask(String taskId) async {
 
     tzInit.initializeTimeZones();
 
-    BackgroundFetch.stop(taskId);
-    JagaJindanData dat = JagaJindanData.readFromJSON(await readInternal());
+    var json = await readInternal();
+    if (jsonEncode(json) == "{}") {
+      throw new Error();
+    }
+    JagaJindanData dat = JagaJindanData.readFromJSON(json);
 
     if (dat != null) {
-      if (taskId == SURVEY_TASK_ID) sendSurvey(dat, true);
-      setBackgroundProcess(dat);
+      if (taskId == SURVEY_TASK_ID) await sendSurvey(dat, true);
+      await setBackgroundProcess(dat);
     }
   } catch (e) {
-    noti("오류가 발생했습니다.", "자동 제출을 활성화하려면 앱을 켜주세요.");
+    noti("오류가 발생했습니다.", e.toString());
   } finally {
-    BackgroundFetch.scheduleTask(TaskConfig(
+    BackgroundFetch.finish(taskId);
+    await BackgroundFetch.stop(taskId);
+    await BackgroundFetch.scheduleTask(TaskConfig(
         enableHeadless: true,
         startOnBoot: true,
         stopOnTerminate: false,
@@ -43,9 +48,7 @@ void backgroundFetchHeadlessTask(String taskId) async {
   }
 }
 
-void setBackgroundProcess(JagaJindanData dat) {
-  BackgroundFetch.stop(SURVEY_TASK_ID);
-
+Future<void> setBackgroundProcess(JagaJindanData dat) async {
   var tm = dat.submitTime;
   if (tm == null || tm.minute == null || tm.hour == null) return;
 
@@ -58,14 +61,14 @@ void setBackgroundProcess(JagaJindanData dat) {
 
   var diff = target.difference(currTime);
 
-  BackgroundFetch.scheduleTask(TaskConfig(
+  await BackgroundFetch.stop(SURVEY_TASK_ID);
+  await BackgroundFetch.scheduleTask(TaskConfig(
       enableHeadless: true,
       startOnBoot: true,
       stopOnTerminate: false,
       forceAlarmManager: true,
       taskId: SURVEY_TASK_ID,
-      delay:
-          (diff.inSeconds + 1) * 1000));
+      delay: diff.inMilliseconds));
 }
 
 void showSurveyResult(
@@ -76,7 +79,7 @@ void showSurveyResult(
     toast(message);
 }
 
-void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
+Future<void> sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
   try {
     String jwt = jsonDecode((await http.post(
             'https://${credentials.edu}hcs.eduro.go.kr/v2/findUser',

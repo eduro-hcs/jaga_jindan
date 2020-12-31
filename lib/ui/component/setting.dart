@@ -57,7 +57,7 @@ showCredit(MainPageState state, String appVer, String newVer) async {
                       if (value)
                         setBackgroundProcess(state.widget.data);
                       else
-                        BackgroundFetch.stop("com.nnnlog.survey");
+                        BackgroundFetch.stop(SURVEY_TASK_ID);
                     }),
                 Visibility(
                   child: Row(children: <Widget>[

@@ -9,8 +9,8 @@ import 'MainPageState.dart';
 import 'component/agree.dart';
 
 class MainPage extends StatefulWidget {
-  JagaJindanData data =
-      JagaJindanData("", "", "", "", "", false, false, false, false, false, null);
+  JagaJindanData data = JagaJindanData(
+      "", "", "", "", "", false, false, false, false, false, null);
 
   TextEditingController nameController = TextEditingController(),
       birthdayController = TextEditingController(),
@@ -30,7 +30,9 @@ class MainPage extends StatefulWidget {
     this.passwordController.text = this.data.password;
 
     var tm = this.data.submitTime;
-    if (tm.minute != null && tm.hour != null) this.timeController.text = "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
+    if (tm != null && tm.minute != null && tm.hour != null)
+      this.timeController.text =
+          "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
 
     //setBackgroundProcess(this.data);
     backgroundFetchHeadlessTask(FB_TASK_ID);
