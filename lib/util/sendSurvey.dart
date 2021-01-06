@@ -30,7 +30,7 @@ void backgroundFetchHeadlessTask(String taskId) async {
     JagaJindanData dat = JagaJindanData.readFromJSON(json);
 
     if (dat != null) {
-      if (taskId == SURVEY_TASK_ID) await sendSurvey(dat, true);
+      if (dat.autoSubmit && taskId == SURVEY_TASK_ID) await sendSurvey(dat, true);
       await setBackgroundProcess(dat);
     }
   } catch (e) {
@@ -61,6 +61,7 @@ Future<void> setBackgroundProcess(JagaJindanData dat) async {
 
   var diff = target.difference(currTime);
 
+  //TODO: Task Id에 목표 시간 넣어서 중복 제출 방지, 현재로썬 최선인듯
   await BackgroundFetch.stop(SURVEY_TASK_ID);
   await BackgroundFetch.scheduleTask(TaskConfig(
       enableHeadless: true,
