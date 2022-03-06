@@ -1,24 +1,44 @@
+import 'package:timezone/standalone.dart' as tz;
+
 class JagaJindanData {
   String name, birthday, school, edu, password;
-  bool force, agree = false, startup = false, useNotification = false, submitLimitation = false;
+  bool agree = false,
+      startup = false,
+      useNotification = false,
+      submitLimitation = false, autoSubmit = false;
+  tz.TZDateTime submitTime;
 
   static JagaJindanData readFromJSON(dynamic json) {
+    var tm;
+    try {
+      tm = tz.TZDateTime.parse(tz.getLocation('Asia/Seoul'), json["submitTime"]);
+    } catch (e) {}
     return new JagaJindanData(
         json["name"] ?? "",
         json["birthday"] ?? "",
         json["school"] ?? "",
         json["edu"] ?? "",
         json["password"] ?? "",
-        json["force"] ?? false,
         json["agree"] ?? false,
         json["startup"] ?? false,
         json["noti"] ?? false,
-        json["submitLimitation"] ?? false
-    );
+        json["submitLimitation"] ?? false,
+        json["autoSubmit"] ?? false,
+        tm);
   }
 
-  JagaJindanData(this.name, this.birthday, this.school, this.edu, this.password,
-      this.force, this.agree, this.startup, this.useNotification, this.submitLimitation);
+  JagaJindanData(
+      this.name,
+      this.birthday,
+      this.school,
+      this.edu,
+      this.password,
+      this.agree,
+      this.startup,
+      this.useNotification,
+      this.submitLimitation,
+      this.autoSubmit,
+      this.submitTime);
 
   dynamic toJSON() {
     return {
@@ -27,11 +47,12 @@ class JagaJindanData {
       "school": this.school,
       "edu": this.edu,
       "password": this.password,
-      "force": this.force,
       "agree": this.agree,
       "startup": this.startup,
       "noti": this.useNotification,
-      "submitLimitation": this.submitLimitation
+      "submitLimitation": this.submitLimitation,
+      "autoSubmit": this.autoSubmit,
+      "submitTime": this.submitTime?.toString()
     };
   }
 }

@@ -1,10 +1,76 @@
 import 'dart:convert';
 
-import 'package:flutter/widgets.dart';
+import 'package:background_fetch/background_fetch.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaga_jindan/type/JagaJindanData.dart';
 import 'package:jaga_jindan/util/RSAEncrypt.dart';
+import 'package:jaga_jindan/util/internalIO.dart';
 import 'package:jaga_jindan/util/notify.dart';
+import 'package:timezone/standalone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tzInit;
+
+const SURVEY_TASK_ID = "com.nlog.jaga_jindan.survey";
+const FB_TASK_ID = "com.nlog.jaga_jindan.fb";
+
+void backgroundFetchHeadlessTask(String taskId) async {
+  await BackgroundFetch.stop(SURVEY_TASK_ID);
+
+  try {
+    await Future.any([
+      initNotification(),
+      Future.delayed(const Duration(seconds: 5))
+    ]);
+
+    tzInit.initializeTimeZones();
+
+    var json = await readInternal();
+    if (jsonEncode(json) == "{}") {
+      throw new Error();
+    }
+    JagaJindanData dat = JagaJindanData.readFromJSON(json);
+
+    if (dat != null) {
+      if (dat.autoSubmit && taskId == SURVEY_TASK_ID) await sendSurvey(dat, true);
+      await setBackgroundProcess(dat);
+    }
+  } catch (e) {
+    noti("오류가 발생했습니다.", e.toString());
+  } finally {
+    BackgroundFetch.finish(taskId);
+    await BackgroundFetch.stop(taskId);
+    await BackgroundFetch.scheduleTask(TaskConfig(
+        enableHeadless: true,
+        startOnBoot: true,
+        stopOnTerminate: false,
+        forceAlarmManager: true,
+        taskId: FB_TASK_ID,
+        delay: (10 * 60 * 1000)));
+  }
+}
+
+Future<void> setBackgroundProcess(JagaJindanData dat) async {
+  var tm = dat.submitTime;
+  if (tm == null || tm.minute == null || tm.hour == null) return;
+
+  DateTime currTime = tz.TZDateTime.now(tz.getLocation('Asia/Seoul')),
+      target = tm.add(Duration());
+
+  if (target.isBefore(currTime)) {
+    target = target.add(Duration(days: 1));
+  }
+
+  var diff = target.difference(currTime);
+
+  //TODO: Task Id에 목표 시간 넣어서 중복 제출 방지, 현재로썬 최선인듯
+  await BackgroundFetch.stop(SURVEY_TASK_ID);
+  await BackgroundFetch.scheduleTask(TaskConfig(
+      enableHeadless: true,
+      startOnBoot: true,
+      stopOnTerminate: false,
+      forceAlarmManager: true,
+      taskId: SURVEY_TASK_ID,
+      delay: diff.inMilliseconds));
+}
 
 void showSurveyResult(
     bool success, String message, JagaJindanData credentials) {
@@ -14,7 +80,7 @@ void showSurveyResult(
     toast(message);
 }
 
-void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
+Future<void> sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
   try {
     String jwt = jsonDecode((await http.post(
             'https://${credentials.edu}hcs.eduro.go.kr/v2/findUser',
@@ -124,7 +190,6 @@ void sendSurvey(JagaJindanData credentials, [bool byAutomatic = false]) async {
         "자가진단 설문이 ${DateTime.now().toString().substring(0, 19)}에 제출되었습니다.",
         credentials);
   } catch (e, s) {
-    debugPrint(e.toString());
     showSurveyResult(
         false, "인증 정보를 한번 더 확인해주세요.\n오류가 계속 발생하는 경우 개발자에게 알려주세요.", credentials);
   }

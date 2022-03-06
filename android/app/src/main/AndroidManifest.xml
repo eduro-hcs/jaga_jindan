@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.nlog.jaga_jindan">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -13,6 +14,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="자동 자가진단"
+        tools:replace="android:label"
         android:icon="@drawable/app_icon">
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
             <intent-filter>

@@ -13,12 +13,12 @@ JagaJindanForm(MainPageState state) {
               style: TextStyle(
                   //color: Colors.black,
                   fontSize:
-                      Theme.of(state.context).textTheme.headline4.fontSize)),
+                      Theme.of(state.context).textTheme.headline4?.fontSize)),
           new Padding(padding: EdgeInsets.only(bottom: 50)),
           TextFormField(
             decoration: const InputDecoration(hintText: "이름을 입력하세요."),
-            validator: (value) {
-              if (value.isEmpty) {
+            validator: (String value) {
+              if (value?.isEmpty == true) {
                 return "이름을 입력하세요.";
               }
               return null;
@@ -38,7 +38,7 @@ JagaJindanForm(MainPageState state) {
             decoration:
                 const InputDecoration(hintText: "생년월일을 입력하세요. (YYMMDD)"),
             validator: (value) {
-              if (value.length != 6) {
+              if (value?.length != 6) {
                 return "생년월일을 올바르게 입력하세요.";
               }
               return null;
@@ -75,7 +75,7 @@ JagaJindanForm(MainPageState state) {
               decoration: const InputDecoration(hintText: "비밀번호를 입력하세요."),
               obscureText: true,
               validator: (value) {
-                if (value.length != 4) {
+                if (value?.length != 4) {
                   return "비밀번호 4자리를 입력하세요.";
                 }
                 return null;
@@ -85,64 +85,13 @@ JagaJindanForm(MainPageState state) {
                 state.widget.writeJSON();
               },
               controller: state.widget.passwordController,
-            ),
-            visible: !state.widget.data.force,
+            )
           ),
-          CheckboxListTile(
-            title: const Text('비밀번호 없이 설문 제출'),
-            value: state.widget.data.force,
-            onChanged: (bool value) {
-              state.setState(() {
-                if (value) {
-                  showDialog<void>(
-                    context: state.context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('경고'),
-                        content: SingleChildScrollView(
-                          child: ListBody(
-                            children: <Widget>[
-                              Text('비밀번호 없이 설문을 제출할 수 있습니다.'),
-                              Text('위 기능을 사용함으로써 발생하는 모든 책임은 사용자에게 있습니다.'),
-                            ],
-                          ),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('계속하기'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              state.widget.data.password = "";
-                              state.widget.passwordController.text = "";
-
-                              state.setState(() {
-                                state.widget.data.force = true;
-                                state.widget.writeJSON();
-                              });
-                            },
-                          ),
-                          FlatButton(
-                            child: Text('끄기'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  state.widget.data.force = false;
-                  state.widget.writeJSON();
-                }
-              });
-            },
-          ),
-          CheckboxListTile(
+          /*CheckboxListTile(
             title: const Text('앱 시작 시 자가진단 제출'),
             value: state.widget.data.startup,
             onChanged: (bool value) {
+              if (!(value is bool)) return;
               state.setState(() {
                 if (value) {
                   showDialog<void>(
@@ -188,7 +137,7 @@ JagaJindanForm(MainPageState state) {
                 }
               });
             },
-          ),
+          ),*/
         ],
       ));
 }

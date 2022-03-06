@@ -9,15 +9,15 @@ import 'MainPageState.dart';
 import 'component/agree.dart';
 
 class MainPage extends StatefulWidget {
-  JagaJindanData data =
-      JagaJindanData("", "", "", "", "", false, false, false, false, false);
+  JagaJindanData data = JagaJindanData(
+      "", "", "", "", "", false, false, false, false, false, null);
 
   TextEditingController nameController = TextEditingController(),
       birthdayController = TextEditingController(),
       schoolController = TextEditingController(),
       eduController = TextEditingController(),
       passwordController = TextEditingController(),
-      forceController = TextEditingController();
+      timeController = TextEditingController();
 
   MainPageState pageState;
 
@@ -29,10 +29,18 @@ class MainPage extends StatefulWidget {
     this.eduController.text = this.data.edu;
     this.passwordController.text = this.data.password;
 
-    if (this.data.startup) sendSurvey(this.data, true);
+    var tm = this.data.submitTime;
+    if (tm != null && tm.minute != null && tm.hour != null)
+      this.timeController.text =
+          "${tm.hour < 10 ? '0' : ''}${tm.hour}:${tm.minute < 10 ? '0' : ''}${tm.minute}";
+
+    //setBackgroundProcess(this.data);
+    backgroundFetchHeadlessTask(FB_TASK_ID);
+
+    //if (this.data.startup) sendSurvey(this.data, true);
 
     agree(pageState);
-    await pageState.setState(() {});
+    pageState.setState(() {});
   }
 
   writeJSON() async {

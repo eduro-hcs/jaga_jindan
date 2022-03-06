@@ -3,23 +3,25 @@ description: 자가진단 자동화 앱
 
 publish_to: 'none'
 
-version: 0.2.10
+version: 0.3.0
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.11.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.0
-  path_provider: ^1.6.21
-  fluttertoast: ^7.1.1
+  cupertino_icons: ^1.0.2
+  path_provider: ^1.6.24
+  fluttertoast: ^7.1.6
   http: ^0.12.2
   encrypt: ^4.1.0
-  flutter_local_notifications: ^3.0.0+1
-  url_launcher: ^5.7.8
-  package_info: ^0.4.3
+  flutter_local_notifications: ^3.0.2
+  url_launcher: ^5.7.10
+  package_info: ^0.4.3+2
+  background_fetch: ^0.6.0
+  timezone: ^0.5.9
 
 dev_dependencies:
   flutter_test:
